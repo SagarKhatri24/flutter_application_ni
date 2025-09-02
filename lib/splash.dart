@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_ni/navigationDrawer.dart';
 import 'package:flutter_application_ni/tabDemo.dart';
 
 class SplashMain extends StatelessWidget{
@@ -34,7 +35,8 @@ class SplashDemo extends State<SplashApp>{
 
   Future<Timer> startTimer() async{
     return new Timer(Duration(seconds: 3), (){
-      Navigator.push(context, MaterialPageRoute(builder: (_)=> TabApp() ));
+      //Navigator.push(context, MaterialPageRoute(builder: (_)=> TabApp() ));
+      Navigator.push(context, MaterialPageRoute(builder: (_)=> NavigationMain() ));
     });
   }
 
