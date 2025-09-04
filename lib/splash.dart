@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_ni/bottomNav.dart';
 import 'package:flutter_application_ni/navigationDrawer.dart';
 import 'package:flutter_application_ni/tabDemo.dart';
 
@@ -36,7 +37,7 @@ class SplashDemo extends State<SplashApp>{
   Future<Timer> startTimer() async{
     return new Timer(Duration(seconds: 3), (){
       //Navigator.push(context, MaterialPageRoute(builder: (_)=> TabApp() ));
-      Navigator.push(context, MaterialPageRoute(builder: (_)=> NavigationMain() ));
+      Navigator.push(context, MaterialPageRoute(builder: (_)=> BottomDemo() ));
     });
   }
 
