@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_ni/SqliteHelper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class SignupMain extends StatelessWidget{
+// class SignupMain extends StatelessWidget{
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    //throw UnimplementedError();
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SignupApp(),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     // TODO: implement build
+//     //throw UnimplementedError();
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: SignupApp(),
+//     );
+//   }
 
-}
+// }
 
 class SignupApp extends StatefulWidget{
 
@@ -192,7 +192,7 @@ class SignupState extends State<SignupApp>{
                         }
                       }
                     }, 
-                    child: Text("Insert")
+                    child: Text("Signup")
                   ),
                 ),
               ),
@@ -204,20 +204,30 @@ class SignupState extends State<SignupApp>{
   }
 
   void insertData(sName,sEmail,sContact,sPassword) async{
-    Map<String,dynamic> map = {
-      SqliteHelper.name : sName,
-      SqliteHelper.email : sEmail,
-      SqliteHelper.contact : sContact,
-      SqliteHelper.password : sPassword
-    };
 
-    final id = await dbHelper.insertFun(map);
-    print(id);
-    Fluttertoast.showToast(
-      msg: "Insert Successfully",
-      toastLength: Toast.LENGTH_SHORT
-    );
-
+    var listData = await dbHelper.checkUserData(sEmail, sContact);
+    //print(listData,listData.le);
+    if(listData.length > 0){
+      Fluttertoast.showToast(
+        msg: "You have already Registered",
+        toastLength: Toast.LENGTH_SHORT
+      );
+    }
+    else{      
+      Map<String,dynamic> map = {
+        SqliteHelper.name : sName,
+        SqliteHelper.email : sEmail,
+        SqliteHelper.contact : sContact,
+        SqliteHelper.password : sPassword
+      };
+      final id = await dbHelper.insertFun(map);
+      print(id);
+      Fluttertoast.showToast(
+        msg: "Signup Successfully",
+        toastLength: Toast.LENGTH_SHORT
+      );
+      Navigator.pop(context);
+    }
   }
 
 }

@@ -51,4 +51,14 @@ class SqliteHelper{
     return db!.insert(tableName, map);
   } 
 
+  Future<List<Map<String,dynamic>>> checkUserData(String sEmail,String sContact) async{
+    Database? db = await instance.database;
+    return await db!.query(tableName,where: '$email = ? OR $contact = ?',whereArgs: [sEmail,sContact]);
+  } 
+
+  Future<List<Map<String,dynamic>>> loginData(String sEmail,String sPassword) async{
+    Database? db = await instance.database;
+    return await db!.query(tableName,where: '($email = ? OR $contact = ?) AND $password = ?',whereArgs: [sEmail,sEmail,sPassword]);
+  } 
+
 }
