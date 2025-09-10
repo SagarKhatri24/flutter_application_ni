@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ni/SqliteHelper.dart';
+import 'package:flutter_application_ni/constantData.dart';
+import 'package:flutter_application_ni/profile.dart';
 import 'package:flutter_application_ni/signup.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginMain extends StatelessWidget{
 
@@ -133,7 +136,7 @@ class LoginState extends State<LoginApp>{
   }
 
   void loginData(sEmail,sPassword) async{
-
+    var sp = await SharedPreferences.getInstance();
     var listData = await dbHelper.loginData(sEmail, sPassword);
     if(listData.length > 0){
       print(listData);
@@ -151,10 +154,19 @@ class LoginState extends State<LoginApp>{
       print(sContact);
       print(sPassword);
 
+      sp.setString(ConstantData.USERID, sUserId.toString());
+      sp.setString(ConstantData.NAME, sName);
+      sp.setString(ConstantData.EMAIL, sEmail);
+      sp.setString(ConstantData.CONTACT, sContact);
+      sp.setString(ConstantData.PASSWORD, sPassword);
+
       Fluttertoast.showToast(
         msg: "Login Successfully",
         toastLength: Toast.LENGTH_SHORT
       );
+
+      Navigator.push(context, MaterialPageRoute(builder: (_)=> ProfileApp()));
+
     }
     else{      
       Fluttertoast.showToast(

@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ni/bottomNav.dart';
+import 'package:flutter_application_ni/constantData.dart';
 import 'package:flutter_application_ni/login.dart';
 import 'package:flutter_application_ni/navigationDrawer.dart';
+import 'package:flutter_application_ni/profile.dart';
 import 'package:flutter_application_ni/signup.dart';
 import 'package:flutter_application_ni/tabDemo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashMain extends StatelessWidget{
 
@@ -37,9 +40,17 @@ class SplashDemo extends State<SplashApp>{
   }
 
   Future<Timer> startTimer() async{
+    var sp = await SharedPreferences.getInstance();
+    var sUserId = sp.getString(ConstantData.USERID) ?? "";
+    
     return new Timer(Duration(seconds: 3), (){
-      //Navigator.push(context, MaterialPageRoute(builder: (_)=> TabApp() ));
-      Navigator.push(context, MaterialPageRoute(builder: (_)=> LoginMain() ));
+      if(sUserId == ""){
+        //Navigator.push(context, MaterialPageRoute(builder: (_)=> TabApp() ));
+        Navigator.push(context, MaterialPageRoute(builder: (_)=> LoginMain() ));
+      }
+      else{
+        Navigator.push(context, MaterialPageRoute(builder: (_)=> ProfileApp() ));        
+      }
     });
   }
 
