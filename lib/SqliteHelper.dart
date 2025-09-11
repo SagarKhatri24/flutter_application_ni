@@ -64,5 +64,11 @@ class SqliteHelper{
   Future<int> updateFun(Map<String,dynamic> map,String sUserId) async{
     Database? db = await instance.database;
     return db!.update(tableName, map,where: '$userId = ?',whereArgs: [sUserId]);
-  } 
+  }
+
+  Future<int> deleteFun(String sUserId) async{
+    Database? db = await instance.database;
+    return db!.delete(tableName, where: '$userId = ?',whereArgs: [sUserId]);
+  }
+
 }

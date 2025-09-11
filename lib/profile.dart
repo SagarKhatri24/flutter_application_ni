@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ni/SqliteHelper.dart';
 import 'package:flutter_application_ni/constantData.dart';
+import 'package:flutter_application_ni/login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -218,6 +219,20 @@ class ProfileState extends State<ProfileApp>{
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Container(
+                  color: Colors.blue.shade300,
+                  width: 200.0,
+                  height: 40.0,
+                  child: TextButton(
+                    onPressed: (){
+                      deleteData(sUserId);
+                    }, 
+                    child: Text("Delete Profile")
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -246,6 +261,22 @@ class ProfileState extends State<ProfileApp>{
     sp.setString(ConstantData.CONTACT, sContact);
     sp.setString(ConstantData.PASSWORD, sPassword);
 
+  }
+
+  void deleteData(String sUserId) async{
+    var sp = await SharedPreferences.getInstance();
+    
+    final id = await dbHelper.deleteFun(sUserId);
+    print(id);
+    Fluttertoast.showToast(
+      msg: "Profile Delete Successfully",
+      toastLength: Toast.LENGTH_SHORT
+    );
+
+    //sp.remove(ConstantData.CONTACT);
+    //sp.remove(ConstantData.EMAIL);
+    sp.clear();
+    Navigator.push(context, MaterialPageRoute(builder: (_)=> LoginMain()));
   }
 
 }
