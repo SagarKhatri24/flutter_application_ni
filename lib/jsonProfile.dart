@@ -6,18 +6,19 @@ import 'package:flutter_application_ni/SqliteHelper.dart';
 import 'package:flutter_application_ni/constantData.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-class JsonSignupApp extends StatefulWidget{
+class JsonProfileApp extends StatefulWidget{
 
   @override
-  JsonSignupState createState() => JsonSignupState();
+  JsonProfileState createState() => JsonProfileState();
 
 }
 
-class JsonSignupState extends State<JsonSignupApp>{
+class JsonProfileState extends State<JsonProfileApp>{
 
   GlobalKey<FormState> formKey = new GlobalKey<FormState>();
-  late String sName,sEmail,sContact,sPassword,sConfirmPassword,sGender;
+  late String sUserId,sName,sEmail,sContact,sPassword,sConfirmPassword;
   int iGroupValue = 3;
   List<String> cityArray = [
     'Ahmedabad',
@@ -27,14 +28,56 @@ class JsonSignupState extends State<JsonSignupApp>{
   ];
 
   late String sCity = "Ahmedabad";
+  late String sGender = "Male";
+
+  var nameController,emailController,contactController;
+  var sp;
   
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setData();
+  }
+
+  setData() async{
+    sp = await SharedPreferences.getInstance();
+    setState(() {
+      sUserId = sp.getString(ConstantData.USERID) ?? "";
+      sName = sp.getString(ConstantData.NAME) ?? "";
+      sEmail = sp.getString(ConstantData.EMAIL) ?? "";
+      sContact = sp.getString(ConstantData.CONTACT) ?? "";
+      sCity = sp.getString(ConstantData.CITY) ?? "Ahmedabad";
+      sGender = sp.getString(ConstantData.GENDER) ?? "Male";
+      if(sGender == "Male"){
+        iGroupValue = 0;
+      }
+      else if(sGender == "Female"){
+        iGroupValue = 1;
+      }
+      else if(sGender == "Transgender"){
+        iGroupValue = 2;
+      }
+      else{
+        iGroupValue = 3;
+      }
+
+      nameController = TextEditingController(text: sName);
+      emailController = TextEditingController(text: sEmail);
+      contactController = TextEditingController(text: sContact);
+      
+
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     //throw UnimplementedError();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Signup"),
+        title: Text("Profile"),
         backgroundColor: Colors.amber.shade100,
       ),
       body: Container(
@@ -45,6 +88,7 @@ class JsonSignupState extends State<JsonSignupApp>{
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
                 child: TextFormField(
+                  controller: nameController,
                   keyboardType: TextInputType.name,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -69,6 +113,7 @@ class JsonSignupState extends State<JsonSignupApp>{
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
                 child: TextFormField(
+                  controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -93,6 +138,7 @@ class JsonSignupState extends State<JsonSignupApp>{
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
                 child: TextFormField(
+                  controller: contactController,
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
                   decoration: InputDecoration(
@@ -267,7 +313,7 @@ class JsonSignupState extends State<JsonSignupApp>{
                         }
                         else{
                           if (connection.contains(ConnectivityResult.mobile) || connection.contains(ConnectivityResult.wifi)){
-                            insertData(sName,sEmail,sContact,sPassword,sGender,sCity);
+                            insertData(sUserId,sName,sEmail,sContact,sPassword,sGender,sCity);
                           }
                           else{
                             Fluttertoast.showToast(
@@ -280,7 +326,7 @@ class JsonSignupState extends State<JsonSignupApp>{
                       }
                       
                     }, 
-                    child: Text("Signup")
+                    child: Text("Update Profile")
                   ),
                 ),
               ),
@@ -305,8 +351,9 @@ class JsonSignupState extends State<JsonSignupApp>{
     );
   }
 
-  void insertData(sName,sEmail,sContact,sPassword,sGender,sCity) async{
+  void insertData(sUserId,sName,sEmail,sContact,sPassword,sGender,sCity) async{
     var map = {
+        'userid' : sUserId,
         'app_name' : sName,
         'email' : sEmail,
         'contact' : sContact,
@@ -315,7 +362,7 @@ class JsonSignupState extends State<JsonSignupApp>{
         'city' : sCity
       };
 
-    var data = await http.post(Uri.parse(ConstantData.BASE_URL+'signup.php'),body: map);
+    var data = await http.post(Uri.parse(ConstantData.BASE_URL+'updateProfile.php'),body: map);
     if(data.statusCode == 200){
       var jsonData = json.decode(data.body);
       if(jsonData["status"] == true){
@@ -328,7 +375,13 @@ class JsonSignupState extends State<JsonSignupApp>{
           textColor: Colors.black,
           fontSize: 16.0
         );
-        Navigator.pop(context);
+
+        sp.setString(ConstantData.USERID, sUserId);
+        sp.setString(ConstantData.NAME, sName);
+        sp.setString(ConstantData.EMAIL, sEmail);
+        sp.setString(ConstantData.CONTACT, sContact);
+        sp.setString(ConstantData.CITY, sCity);
+        sp.setString(ConstantData.GENDER, sGender);
       }
       else{
         Fluttertoast.showToast(

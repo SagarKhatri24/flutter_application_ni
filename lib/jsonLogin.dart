@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ni/SqliteHelper.dart';
+import 'package:flutter_application_ni/constantData.dart';
+import 'package:flutter_application_ni/jsonProfile.dart';
 import 'package:flutter_application_ni/jsonSignup.dart';
 import 'package:flutter_application_ni/login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class JsonLoginApp extends StatefulWidget{
 
@@ -98,7 +101,7 @@ class JsonLoginState extends State<JsonLoginApp>{
                       if(formKey.currentState!.validate()){
                         formKey.currentState!.save();
                           if (connection.contains(ConnectivityResult.mobile) || connection.contains(ConnectivityResult.wifi)){
-                            //insertData(sEmail,sPassword);
+                            insertData(sEmail,sPassword);
                           }
                           else{
                             Fluttertoast.showToast(
@@ -137,12 +140,14 @@ class JsonLoginState extends State<JsonLoginApp>{
   }
 
   void insertData(sEmail,sPassword) async{
+    var sp = await SharedPreferences.getInstance();
+    
     var map = {
         'email' : sEmail,
         'password' : sPassword
       };
 
-    var data = await http.post(Uri.parse('http://localhost/ni_api/signup.php'),body: map);
+    var data = await http.post(Uri.parse(ConstantData.BASE_URL+'login.php'),body: map);
     if(data.statusCode == 200){
       var jsonData = json.decode(data.body);
       if(jsonData["status"] == true){
@@ -155,7 +160,28 @@ class JsonLoginState extends State<JsonLoginApp>{
           textColor: Colors.black,
           fontSize: 16.0
         );
-        Navigator.pop(context);
+        
+        var userData = jsonData["UserData"];
+        for(var i = 0;i<userData.length;i++){
+          var sUserId = userData[i]["userid"];
+          var sName = userData[i]["name"];
+          var sEmail = userData[i]["email"];
+          var sContact = userData[i]["contact"];
+          var sGender = userData[i]["gender"];
+          var sCity = userData[i]["city"];
+          var sProfile = userData[i]["profile"];
+
+          sp.setString(ConstantData.USERID, sUserId);
+          sp.setString(ConstantData.NAME, sName);
+          sp.setString(ConstantData.EMAIL, sEmail);
+          sp.setString(ConstantData.CONTACT, sContact);
+          sp.setString(ConstantData.CITY, sCity);
+          sp.setString(ConstantData.GENDER, sGender);
+          sp.setString(ConstantData.PROFILE, sProfile);
+
+        }
+
+        Navigator.push(context, MaterialPageRoute(builder: (_)=>JsonProfileApp()));
       }
       else{
         Fluttertoast.showToast(
