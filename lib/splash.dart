@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_ni/bottomNav.dart';
 import 'package:flutter_application_ni/constantData.dart';
 import 'package:flutter_application_ni/jsonLogin.dart';
+import 'package:flutter_application_ni/jsonProfile.dart';
 import 'package:flutter_application_ni/jsonSignup.dart';
 import 'package:flutter_application_ni/login.dart';
 import 'package:flutter_application_ni/navigationDrawer.dart';
@@ -46,14 +47,14 @@ class SplashDemo extends State<SplashApp>{
     var sUserId = sp.getString(ConstantData.USERID) ?? "";
     
     return new Timer(Duration(seconds: 3), (){
-      Navigator.push(context, MaterialPageRoute(builder: (_)=> JsonLoginApp() ));
-      // if(sUserId == ""){
-      //   //Navigator.push(context, MaterialPageRoute(builder: (_)=> TabApp() ));
-      //   Navigator.push(context, MaterialPageRoute(builder: (_)=> LoginMain() ));
-      // }
-      // else{
-      //   Navigator.push(context, MaterialPageRoute(builder: (_)=> ProfileApp() ));        
-      // }
+      //Navigator.push(context, MaterialPageRoute(builder: (_)=> JsonLoginApp() ));
+      if(sUserId == ""){
+        //Navigator.push(context, MaterialPageRoute(builder: (_)=> TabApp() ));
+        Navigator.push(context, MaterialPageRoute(builder: (_)=> JsonLoginApp() ));
+      }
+      else{
+        Navigator.push(context, MaterialPageRoute(builder: (_)=> JsonProfileApp() ));        
+      }
     });
   }
 
